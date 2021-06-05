@@ -1,0 +1,122 @@
+canvas {
+  border: 1px solid #888;
+}
+
+* {
+  font-family: monospace !important;
+}
+
+input[type='checkbox'], input[type='radio'] {
+  filter: grayscale(1) contrast(10);
+  width: 23px !important;
+  height: 23px !important;
+  margin: 2px !important;
+}
+
+#c-c {
+  position: relative;
+  display: inline-block;
+}
+
+#c-c-c {
+  position: relative;
+}
+
+#mx {
+  position: relative;
+  color: #888;
+  border-bottom: 1px solid #888;
+}
+
+#mx span {
+  border-left: 1px solid #888;
+  position: absolute;
+  padding: 0.5em 0 0 0.5em;
+}
+
+span.x25 {
+  left: 25%;
+}
+
+span.x50 {
+  left: 50%;
+}
+
+span.x75 {
+  left: 75%;
+}
+
+span.x100 {
+  left: 100%;
+}
+
+#my {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  border-left: 1px solid #888;
+  margin-left: 6px;
+  top: 0;
+  left: 100%;
+  height: calc(100% - 6px);
+  color: #888;
+}
+
+
+#my span {
+  border-top: 1px solid #888;
+  position: absolute;
+  padding: 0em 0 0 3em;
+}
+
+span.y25 {
+  top: 25%;
+}
+
+span.y50 {
+  top: 50%;
+}
+
+span.y75 {
+  top: 75%;
+}
+
+span.y100 {
+  top: 100%;
+}
+
+.dg * {
+  border-color: black !important;
+  background: white !important;
+  text-shadow: none;
+  color: black !important;
+  font-size: 16px !important;
+}
+
+.dg .c .slider-fg {
+  background: black !important;
+}
+
+.dg .c .slider {
+  border: 1px solid black;
+}
+
+.dg .c select {
+  margin-top: 1px;
+}
+
+
+.dg ul li ul li ul li.title::before {
+  content: '-> ';
+  color: #888;
+}
+
+.dg ul li ul li ul li.title {
+  font-size: 12px !important;
+  height: 24px;
+  color: #888 !important;
+}
+
+.dg ul li ul li ul li span {
+  font-size: 13px !important;
+}
