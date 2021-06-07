@@ -10,6 +10,9 @@ var general_settings = {
       screenfull.toggle();
     }
   },
+  redraw: function() {
+    draw()
+  },
   download_json: download
 };
 
@@ -24,7 +27,7 @@ function initialize() {
   gf.add(general_settings, 'download_json');
   gf.add(general_settings, 'randomize').onChange(draw);
   gf.add(general_settings, 'scale', 1, 10).onChange(draw);
-
+  gf.add(general_settings, 'redraw').onChange(draw);
   var rf = gui.addFolder('Repeater');
 
   rf.add(general_settings, 'repeat_x', 1, 10, 1).onChange(draw);
@@ -383,10 +386,6 @@ function face_profile() {
     jaw_angle__is_float: true,
   }
 
-  var eye_settings = {
-
-  }
-
   var mouth_settings = {
     mouth_depth: 20,
     mouth_depth__min: 10,
@@ -396,9 +395,9 @@ function face_profile() {
   }
 
   var nostril_settings = {
-    nostril_start: 0.1,
+    nostril_start: 0.0,
     nostril_start__min: 0.0,
-    nostril_start__max: 0.4,
+    nostril_start__max: 0.35,
     nostril_start__step: 0.0001,
     nostril_start__is_float: true,
 
@@ -407,15 +406,21 @@ function face_profile() {
     nostril_start_bend__max: 5,
     nostril_start_bend__step: 1,
 
+    nostril_start_bend_depth: 5,
+    nostril_start_bend_depth__min: 1,
+    nostril_start_bend_depth__max: 8,
+    nostril_start_bend_depth__step: 1,
+    nostril_start_bend_depth__is_float: true,
+
     nostril_start_bend_point: 0.2,
     nostril_start_bend_point__min: 0.1,
     nostril_start_bend_point__max: 0.4,
     nostril_start_bend_point__step: 0.0001,
     nostril_start_bend_point__is_float: true,
 
-    nostril_end: 0.6,
+    nostril_end: 0.65,
     nostril_end__min: 0.5,
-    nostril_end__max: 0.8,
+    nostril_end__max: 0.75,
     nostril_end__step: 0.0001,
     nostril_end__is_float: true,
 
@@ -423,6 +428,12 @@ function face_profile() {
     nostril_end_bend__min: 1,
     nostril_end_bend__max: 5,
     nostril_end_bend__step: 1,
+
+    nostril_end_bend_depth: 5,
+    nostril_end_bend_depth__min: 1,
+    nostril_end_bend_depth__max: 8,
+    nostril_end_bend_depth__step: 0.001,
+    nostril_end_bend_depth__is_float: true,
 
     nostril_end_bend_point: 0.8,
     nostril_end_bend_point__min: 0.6,
@@ -432,67 +443,98 @@ function face_profile() {
   }
 
   var alar_crease_settings = {
-    nostril_start: 0.1,
-    nostril_start__min: 0.0,
-    nostril_start__max: 0.4,
-    nostril_start__step: 0.0001,
-    nostril_start__is_float: true,
+    alar_crease_offset: 10,
+    alar_crease_offset__min: 5,
+    alar_crease_offset__max: 20,
+    alar_crease_offset__step: 0.001,
+    alar_crease_offset__is_float: true,
 
-    nostril_start_bend: 2,
-    nostril_start_bend__min: 1,
-    nostril_start_bend__max: 5,
-    nostril_start_bend__step: 1,
+    alar_crease_angle: 80,
+    alar_crease_angle__min: 65,
+    alar_crease_angle__max: 100,
+    alar_crease_angle__step: 0.001,
+    alar_crease_angle__is_float: true,
 
-    nostril_start_bend_point: 0.2,
-    nostril_start_bend_point__min: 0.1,
-    nostril_start_bend_point__max: 0.4,
-    nostril_start_bend_point__step: 0.0001,
-    nostril_start_bend_point__is_float: true,
+    alar_crease_length: 15,
+    alar_crease_length__min: 6,
+    alar_crease_length__max: 20,
+    alar_crease_length__step: 0.001,
+    alar_crease_length__is_float: true,
 
-    nostril_end: 0.6,
-    nostril_end__min: 0.5,
-    nostril_end__max: 0.8,
-    nostril_end__step: 0.0001,
-    nostril_end__is_float: true,
+    alar_crease_start_bend_point: 0.2,
+    alar_crease_start_bend_point__min: 0.05,
+    alar_crease_start_bend_point__max: 0.5,
+    alar_crease_start_bend_point__step: 0.0001,
+    alar_crease_start_bend_point__is_float: true,
 
-    nostril_end_bend: 1,
-    nostril_end_bend__min: 1,
-    nostril_end_bend__max: 5,
-    nostril_end_bend__step: 1,
+    alar_crease_start_bend_depth: 8,
+    alar_crease_start_bend_depth__min: 0,
+    alar_crease_start_bend_depth__max: 10,
+    alar_crease_start_bend_depth__step: 0.0001,
+    alar_crease_start_bend_depth__is_float: true,
 
-    nostril_end_bend_point: 0.8,
-    nostril_end_bend_point__min: 0.6,
-    nostril_end_bend_point__max: 0.9,
-    nostril_end_bend_point__step: 0.0001,
-    nostril_end_bend_point__is_float: true,
+    alar_crease_start_bend_weight: 3,
+    alar_crease_start_bend_weight__min: 1,
+    alar_crease_start_bend_weight__max: 4,
+    alar_crease_start_bend_weight__step: 1,
+
+    alar_crease_end_bend_point: 0.8,
+    alar_crease_end_bend_point__min: 0.6,
+    alar_crease_end_bend_point__max: 0.9,
+    alar_crease_end_bend_point__step: 0.0001,
+    alar_crease_end_bend_point__is_float: true,
+
+    alar_crease_end_bend_depth: 8,
+    alar_crease_end_bend_depth__min: 0,
+    alar_crease_end_bend_depth__max: 10,
+    alar_crease_end_bend_depth__step: 0.0001,
+    alar_crease_end_bend_depth__is_float: true,
+
+    alar_crease_end_bend_weight: 1,
+    alar_crease_end_bend_weight__min: 1,
+    alar_crease_end_bend_weight__max: 2,
+    alar_crease_end_bend_weight__step: 1,
+  }
+
+  var eye_settings = {
+    eye_offset: 15,
+    eye_offset__min: 10,
+    eye_offset__max: 30,
+    eye_offset__step: 0.001,
+    eye_offset__is_float: true,
+
+    eye_length: 35,
+    eye_length__min: 20,
+    eye_length__max: 45,
+    eye_length__step: 0.001,
+    eye_length__is_float: true,
   }
 
   var base_line_settings_folder = gui.addFolder("Base line");
-  //base_line_settings_folder.open();
   create_settings(base_line_settings, base_line_settings_folder);
 
   var nose_settings_folder = gui.addFolder("Nose");
-  //nose_settings_folder.open();
   create_settings(nose_settings, nose_settings_folder);
 
+  var eye_settings_folder = gui.addFolder("Eye");
+  create_settings(eye_settings, eye_settings_folder);
+
   var nostril_settings_folder = gui.addFolder("Nostril");
-  nostril_settings_folder.open();
   create_settings(nostril_settings, nostril_settings_folder);
 
+  var alar_crease_settings_folder = gui.addFolder("Alar crease");
+  create_settings(alar_crease_settings, alar_crease_settings_folder);
+
   var forehead_settings_folder = gui.addFolder("Forehead");
-  //forehead_settings_folder.open();
   create_settings(forehead_settings, forehead_settings_folder);
 
   var labial_settings_folder = gui.addFolder("Labial");
-  //labial_settings_folder.open();
   create_settings(labial_settings, labial_settings_folder);
 
   var chin_settings_folder = gui.addFolder("Chin");
-  //chin_settings_folder.open();
   create_settings(chin_settings, chin_settings_folder);
 
   var mouth_settings_folder = gui.addFolder("Mouth");
-  //mouth_settings_folder.open();
   create_settings(mouth_settings, mouth_settings_folder);
 
   return function() {
@@ -504,6 +546,8 @@ function face_profile() {
       run_randomization(chin_settings);
       run_randomization(mouth_settings);
       run_randomization(nostril_settings);
+      run_randomization(alar_crease_settings);
+      run_randomization(eye_settings);
     }
 
     // ================
@@ -575,6 +619,17 @@ function face_profile() {
       labial_point,
       pogonion
     ]
+
+    // ======== EYE ========
+
+    var eye_front = [sellion[0], sellion[1]];
+    eye_front[0] -= eye_settings.eye_offset;
+
+    var eye_back = [eye_front[0], eye_front[1]];
+    eye_back[0] -= eye_settings.eye_length;
+
+    //mark(eye_front);
+    //mark(eye_back);
 
     // ======== NOSE ========
 
@@ -657,8 +712,8 @@ function face_profile() {
     );
 
     var nostril_start_control_point = [
-      _nostril_start_control_point[0]+Math.cos(deg2rad(-base_line_settings.nasolabial_angle))*5,
-      _nostril_start_control_point[1]+Math.sin(deg2rad(-base_line_settings.nasolabial_angle))*5
+      _nostril_start_control_point[0]+Math.cos(deg2rad(-base_line_settings.nasolabial_angle))*nostril_settings.nostril_start_bend_depth,
+      _nostril_start_control_point[1]+Math.sin(deg2rad(-base_line_settings.nasolabial_angle))*nostril_settings.nostril_start_bend_depth
     ];
 
     var _nostril_end_control_point = split_at(
@@ -668,8 +723,8 @@ function face_profile() {
     );
 
     var nostril_end_control_point = [
-      _nostril_end_control_point[0]+Math.cos(deg2rad(-base_line_settings.nasolabial_angle))*5,
-      _nostril_end_control_point[1]+Math.sin(deg2rad(-base_line_settings.nasolabial_angle))*5
+      _nostril_end_control_point[0]+Math.cos(deg2rad(-base_line_settings.nasolabial_angle))*nostril_settings.nostril_end_bend_depth,
+      _nostril_end_control_point[1]+Math.sin(deg2rad(-base_line_settings.nasolabial_angle))*nostril_settings.nostril_end_bend_depth
     ];
 
     var nostril_control_points = [
@@ -683,6 +738,52 @@ function face_profile() {
     ]);
 
     var nostril = bezier(nostril_control_points, 100)
+
+    // ======== ALAR CREASE ========
+
+    var alar_crease_start = [
+      subnasale[0]+Math.cos(deg2rad(base_line_settings.nasolabial_angle+90))*alar_crease_settings.alar_crease_offset,
+      subnasale[1]+Math.sin(deg2rad(base_line_settings.nasolabial_angle+90))*alar_crease_settings.alar_crease_offset
+    ];
+
+    var alar_crease_end = [
+      alar_crease_start[0]+Math.cos(deg2rad(alar_crease_settings.alar_crease_angle+180))*alar_crease_settings.alar_crease_length,
+      alar_crease_start[1]+Math.sin(deg2rad(alar_crease_settings.alar_crease_angle+180))*alar_crease_settings.alar_crease_length
+    ];
+
+    var _alar_crease_start_control_point = split_at(
+      alar_crease_start[0], alar_crease_start[1],
+      alar_crease_end[0], alar_crease_end[1],
+      alar_crease_settings.alar_crease_start_bend_point
+    );
+
+    var _alar_crease_end_control_point = split_at(
+      alar_crease_start[0], alar_crease_start[1],
+      alar_crease_end[0], alar_crease_end[1],
+      alar_crease_settings.alar_crease_end_bend_point
+    );
+
+    var alar_crease_end_control_point = [
+      _alar_crease_end_control_point[0]+Math.cos(deg2rad(base_line_settings.nasolabial_angle+90))*alar_crease_settings.alar_crease_end_bend_depth,
+      _alar_crease_end_control_point[1]+Math.sin(deg2rad(base_line_settings.nasolabial_angle+90))*alar_crease_settings.alar_crease_end_bend_depth
+    ];
+
+    var alar_crease_start_control_point = [
+      _alar_crease_start_control_point[0]+Math.cos(deg2rad(base_line_settings.nasolabial_angle+90))*6,
+      _alar_crease_start_control_point[1]+Math.sin(deg2rad(base_line_settings.nasolabial_angle+90))*6
+    ];
+
+    var alar_crease_control_points = [
+      alar_crease_start
+    ].concat(
+      Array(alar_crease_settings.alar_crease_start_bend_weight).fill(alar_crease_start_control_point)
+    ).concat(
+      Array(alar_crease_settings.alar_crease_end_bend_weight).fill(alar_crease_end_control_point)
+    ).concat([
+      alar_crease_end
+    ]);
+
+    var alar_crease = bezier(alar_crease_control_points, 100);
 
     // ======== FOREHEAD ========
 
@@ -875,11 +976,6 @@ function face_profile() {
       jaw_end
     ], 100)
 
-    // ======== EYE ========
-
-    var eye_start = sellion;
-    eye_start[0]-=20;
-
     // ======== MOUTH ========
 
     var mouth_end = [
@@ -902,7 +998,20 @@ function face_profile() {
       mouth_end
     ]
 
-    return [mouth, nostril, upper_lip_profile, lower_lip_profile, chin_curve, jaw_curve, labial_curve, upper_lip, lower_lip, forehead, nose];
+    return [
+      alar_crease,
+      mouth,
+      nostril,
+      upper_lip_profile,
+      lower_lip_profile,
+      chin_curve,
+      jaw_curve,
+      labial_curve,
+      upper_lip,
+      lower_lip,
+      forehead,
+      nose
+    ];
   }
 }
 
