@@ -179,9 +179,9 @@ function face_profile() {
     nasolabial_angle__step: 0.001,
     nasolabial_angle__is_float: true,
 
-    subnasale: 0.6,
-    subnasale__min: 0.5,
-    subnasale__max: 0.8,
+    subnasale: 0.65,
+    subnasale__min: 0.6,
+    subnasale__max: 0.7,
     subnasale__step: 0.001,
     subnasale__is_float: true,
 
@@ -350,8 +350,8 @@ function face_profile() {
     chin_size__is_float: true,
 
     upper_chin_curve_depth: 5,
-    upper_chin_curve_depth__min: 3,
-    upper_chin_curve_depth__max: 30,
+    upper_chin_curve_depth__min: -5,
+    upper_chin_curve_depth__max: 10,
     upper_chin_curve_depth__step: 0.00001,
     upper_chin_curve_depth__is_float: true,
 
@@ -362,8 +362,8 @@ function face_profile() {
     upper_chin_curve_offset__is_float: true,
 
     lower_chin_curve_depth: 5,
-    lower_chin_curve_depth__min: 3,
-    lower_chin_curve_depth__max: 30,
+    lower_chin_curve_depth__min: -5,
+    lower_chin_curve_depth__max: 10,
     lower_chin_curve_depth__step: 0.00001,
     lower_chin_curve_depth__is_float: true,
 
@@ -508,6 +508,24 @@ function face_profile() {
     eye_length__max: 45,
     eye_length__step: 0.001,
     eye_length__is_float: true,
+
+    eye_lower_opening: 8,
+    eye_lower_opening__min: 2,
+    eye_lower_opening__max: 20,
+    eye_lower_opening__step: 0.001,
+    eye_lower_opening__is_float: true,
+
+    eye_upper_opening: 20,
+    eye_upper_opening__min: 10,
+    eye_upper_opening__max: 35,
+    eye_upper_opening__step: 0.001,
+    eye_upper_opening__is_float: true,
+
+    eyelid: 0.6,
+    eyelid__min: 0.4,
+    eyelid__max: 0.96,
+    eyelid__step: 0.0001,
+    eyelid__is_float: true,
   }
 
   var base_line_settings_folder = gui.addFolder("Base line");
@@ -517,6 +535,7 @@ function face_profile() {
   create_settings(nose_settings, nose_settings_folder);
 
   var eye_settings_folder = gui.addFolder("Eye");
+  eye_settings_folder.open();
   create_settings(eye_settings, eye_settings_folder);
 
   var nostril_settings_folder = gui.addFolder("Nostril");
@@ -528,7 +547,7 @@ function face_profile() {
   var forehead_settings_folder = gui.addFolder("Forehead");
   create_settings(forehead_settings, forehead_settings_folder);
 
-  var labial_settings_folder = gui.addFolder("Labial");
+  var labial_settings_folder = gui.addFolder("Lips");
   create_settings(labial_settings, labial_settings_folder);
 
   var chin_settings_folder = gui.addFolder("Chin");
@@ -622,14 +641,53 @@ function face_profile() {
 
     // ======== EYE ========
 
-    var eye_front = [sellion[0], sellion[1]];
-    eye_front[0] -= eye_settings.eye_offset;
+    var _eye_front = [sellion[0], sellion[1]];
+    _eye_front[0] -= eye_settings.eye_offset;
 
-    var eye_back = [eye_front[0], eye_front[1]];
+    var eye_back = [_eye_front[0], _eye_front[1]];
     eye_back[0] -= eye_settings.eye_length;
 
-    //mark(eye_front);
-    //mark(eye_back);
+    var eye_lower_front = [
+      eye_back[0]+Math.cos(deg2rad(eye_settings.eye_lower_opening))*eye_settings.eye_length,
+      eye_back[1]+Math.sin(deg2rad(eye_settings.eye_lower_opening))*eye_settings.eye_length
+    ]
+
+    var eye_upper_front = [
+      eye_back[0]+Math.cos(deg2rad(-eye_settings.eye_upper_opening))*eye_settings.eye_length,
+      eye_back[1]+Math.sin(deg2rad(-eye_settings.eye_upper_opening))*eye_settings.eye_length
+    ]
+
+    var eyelid_angle = -eye_settings.eye_lower_opening+(
+      eye_settings.eye_upper_opening+eye_settings.eye_lower_opening
+    )*eye_settings.eyelid;
+
+    var eye_eyelid_front = [
+      eye_back[0]+Math.cos(deg2rad(-eyelid_angle))*(eye_settings.eye_length+7),
+      eye_back[1]+Math.sin(deg2rad(-eyelid_angle))*(eye_settings.eye_length+7)
+    ]
+
+    var eye_front_line_angle = (-eye_settings.eye_lower_opening+eye_settings.eye_upper_opening)*0.5;
+
+    var eye_front_line_control_point = [
+      eye_back[0]+Math.cos(deg2rad(-eye_front_line_angle))*(eye_settings.eye_length+5),
+      eye_back[1]+Math.sin(deg2rad(-eye_front_line_angle))*(eye_settings.eye_length+5)
+    ]
+
+    var eye_front = bezier([
+      eye_lower_front,
+      eye_front_line_control_point,
+      eye_upper_front
+    ], 100);
+
+    var eyelid = [
+      eye_back, eye_eyelid_front
+    ]
+
+    var eye_triangle = [
+      eye_upper_front,
+      eye_back,
+      eye_lower_front
+    ].concat(eye_front);
 
     // ======== NOSE ========
 
@@ -999,6 +1057,8 @@ function face_profile() {
     ]
 
     return [
+      eyelid,
+      eye_triangle,
       alar_crease,
       mouth,
       nostril,
