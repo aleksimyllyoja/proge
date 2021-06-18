@@ -39,15 +39,20 @@ function initialize() {
 }
 
 function download() {
-    var data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(PATH));
-    var a = document.createElement('a');
-    a.setAttribute("href", data);
-    a.setAttribute("download", "face_profile.json");
+  var data = _.map(PATH, function(xs) {
+    return _.map(xs, function(_xs) {
+      return [_xs[1], _xs[0]];
+    })
+  });
+  var data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+  var a = document.createElement('a');
+  a.setAttribute("href", data);
+  a.setAttribute("download", "face_profile.json");
 
-    document.body.appendChild(a);
+  document.body.appendChild(a);
 
-    a.click();
-    a.remove();
+  a.click();
+  a.remove();
 }
 
 var MIN_POSTFIX = '__min';
@@ -143,7 +148,7 @@ function deg2rad(deg) {
 
 function face_profile() {
   var base_line_settings = {
-    glabella: 0.15,
+    glabella: 0.194,
     glabella__min: 0.1,
     glabella__max: 0.3,
     glabella__step: 0.001,
@@ -161,8 +166,8 @@ function face_profile() {
     sellion__step: 0.001,
     sellion__is_float: true,
 
-    sellion_offset: 80,
-    sellion_offset__min: 0,
+    sellion_offset: 30,
+    sellion_offset__min: -50,
     sellion_offset__max: 100,
     sellion_offset__step: 0.001,
     sellion_offset__is_float: true,
@@ -180,7 +185,7 @@ function face_profile() {
     nasolabial_angle__is_float: true,
 
     subnasale: 0.65,
-    subnasale__min: 0.6,
+    subnasale__min: 0.5,
     subnasale__max: 0.7,
     subnasale__step: 0.001,
     subnasale__is_float: true,
@@ -269,7 +274,7 @@ function face_profile() {
     smoothing_weight__step: 0.1,
     smoothing_weight__is_float: true,
 
-    glabella_weight: 1,
+    glabella_weight: 2,
     glabella_weight__min: 1,
     glabella_weight__max: 3,
     glabella_weight__step: 1,
@@ -511,12 +516,12 @@ function face_profile() {
 
     eye_lower_opening: 8,
     eye_lower_opening__min: 2,
-    eye_lower_opening__max: 20,
+    eye_lower_opening__max: 30,
     eye_lower_opening__step: 0.001,
     eye_lower_opening__is_float: true,
 
     eye_upper_opening: 20,
-    eye_upper_opening__min: 10,
+    eye_upper_opening__min: 0,
     eye_upper_opening__max: 35,
     eye_upper_opening__step: 0.001,
     eye_upper_opening__is_float: true,
@@ -535,7 +540,6 @@ function face_profile() {
   create_settings(nose_settings, nose_settings_folder);
 
   var eye_settings_folder = gui.addFolder("Eye");
-  eye_settings_folder.open();
   create_settings(eye_settings, eye_settings_folder);
 
   var nostril_settings_folder = gui.addFolder("Nostril");
